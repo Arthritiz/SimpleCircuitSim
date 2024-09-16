@@ -118,13 +118,13 @@ void CirSim::stampCircuit() {
     this->origRightSide = this->circuitRightSide;
 }
 
-void CirSim::setVariableResistance(int ri, double r) {
+void CirSim::setVarLRes(int ri, double r) {
     if (ri >= this->vrIndices.size()) {
         return;
     }
     
     auto i = this->vrIndices[ri];
-    static_cast<VariableResistorElm*>(this->elmArr[i])->setResistance(r);
+    static_cast<VariableResistorElm*>(this->elmArr[i])->setLRes(r);
 }
 
 void CirSim::stampVariableResistors() {
@@ -133,7 +133,7 @@ void CirSim::stampVariableResistors() {
     this->circuitMatrix = this->origMatrix;
     
     for (auto i: this->vrIndices) {
-        bool isStamp = static_cast<VariableResistorElm*>(this->elmArr[i])->stampSmooth();
+        bool isStamp = static_cast<VariableResistorElm*>(this->elmArr[i])->stampUpdate();
         
         if (isStamp && !change) {
             change = true;

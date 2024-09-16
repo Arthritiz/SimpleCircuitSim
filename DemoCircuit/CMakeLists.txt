@@ -1,11 +1,9 @@
 set(EXEC_NAME "DS1-Demo")
 
-include_directories(
-    ${CMAKE_SOURCE_DIR}/DemoCircuit
-)
+target_include_directories("${EXEC_NAME}" PUBLIC ../CirSimLib)
 
 add_executable("${EXEC_NAME}"
-        ${CMAKE_SOURCE_DIR}/DemoCircuit/DS1Run.cpp
-        ${CMAKE_SOURCE_DIR}/DemoCircuit/DS1Sim.cpp)
+        ./DS1Run.cpp
+        ./DS1Sim.cpp)
 
 target_link_libraries("${EXEC_NAME}" PRIVATE CirSimLib)

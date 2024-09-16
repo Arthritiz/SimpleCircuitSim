@@ -58,13 +58,14 @@ private:
 
 class VariableResistorElm: public CircuitElm {
 public:
-    VariableResistorElm(CirSim*, double, std::vector<int>);
+    VariableResistorElm(CirSim*, double, double, std::vector<int>);
     void stamp() override;
-    bool stampSmooth();
-    void setResistance(double r);
+    bool stampUpdate();
+    void setLRes(double r);
+    int getPostCount() override;
 
 private:
-    double currentResistance, targetResistance;
+    double curLRes, targetLRes, totalRes;
 };
 
 #endif /* CircuitElm_hpp */

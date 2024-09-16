@@ -21,9 +21,9 @@ DS1Sim::DS1Sim(double distortionRatio, double toneRatio) {
                                             new OpAmpElm(clipStage, std::vector<int>{3, 2, 4}),
                                             new ResistorElm(clipStage, 1e5, std::vector<int>{3, 5}),
                                             new CapacitorElm(clipStage, 100e-12, std::vector<int>{5, 4}),
-                                            new VariableResistorElm(clipStage, distortionRatio*this->DIST_R, std::vector<int>{5, 4}),
-                                            new VariableResistorElm(clipStage, (1-distortionRatio)*this->DIST_R + 4.7e3, std::vector<int>{5, 6}),
-                                            new CapacitorElm(clipStage, 470e-9, std::vector<int>{6, 0}),
+                                            new VariableResistorElm(clipStage, distortionRatio*this->DIST_R, this->DIST_R, std::vector<int>{4, 5, 6}),
+                                            new ResistorElm(clipStage, 4.7e3, std::vector<int>{6, 9}),
+                                            new CapacitorElm(clipStage, 470e-9, std::vector<int>{9, 0}),
                                             new ResistorElm(clipStage, 2.2e3, std::vector<int>{4, 7}),
                                             new CapacitorElm(clipStage, 470e-9, std::vector<int>{7, 8}),
                                             new CapacitorElm(clipStage, 10e-9, std::vector<int>{8, 0}),
@@ -40,8 +40,7 @@ DS1Sim::DS1Sim(double distortionRatio, double toneRatio) {
                                             new ResistorElm(toneStage, 6.8e3, std::vector<int>{3, 0}),
                                             new ResistorElm(toneStage, 6.8e3, std::vector<int>{1, 5}),
                                             new CapacitorElm(toneStage, 0.1e-6, std::vector<int>{5, 0}),
-                                            new VariableResistorElm(toneStage, toneRatio*this->TONE_R, std::vector<int>{5, 4}),
-                                            new VariableResistorElm(toneStage, (1-toneRatio)*TONE_R, std::vector<int>{4, 3})
+                                            new VariableResistorElm(toneStage, toneRatio*this->TONE_R, this->TONE_R, std::vector<int>{5, 4, 3})
     });
 }
 

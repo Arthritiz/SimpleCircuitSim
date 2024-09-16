@@ -37,6 +37,18 @@ int main(int argc, const char * argv[]) {
         outputArr.at(i) = outputValue;
     }
 
+    for (int i = 0; i < 10; i++)
+    {
+        if (i >= outputArr.size())
+        {
+            break;
+        }
+
+        std::cout << outputArr[i] << " ";
+    }
+
+    std::cout << "\n";
+
     std::cout << "total elapsed: " << totalElapsed << ", samples: " << sampleCount << "\n";
     std::cout << "average elapsed: " << totalElapsed/sampleCount << "\n";
     

@@ -27,9 +27,16 @@ In the `DemoCircuit` directory, the `DS1Sim` files provide an example of simulat
 
 You can use the `prepare` and `process` methods of the `DS1Sim` class in your audio plugin to simulate the DS-1 effect.
 
-## How to compile
+## Linking SimpleCircuitSim in CMake
 
-```bash
-cmake -Bbuild
-cmake --build build
+To integrate SimpleCircuitSim into your project, assume it resides at `./modules/SimpleCircuitSim`.
+
+Add the following commands to your `CMakeLists.txt`:
+
+```cmake
+include_directories(./modules/SimpleCircuitSim/CirSimLib)
+
+add_subdirectory(./modules/SimpleCircuitSim/CirSimLib)
+
+target_link_libraries(YourProject PRIVATE CirSimLib)
 ```

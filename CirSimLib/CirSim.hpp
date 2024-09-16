@@ -38,7 +38,7 @@ public:
     void setCircuitVoltage(VectorXd&);
     double getNodeVoltage(int);
     
-    void setVariableResistance(int, double);
+    void setVarLRes(int, double);
     
 private:
     void analyzeCircuit();
@@ -49,7 +49,7 @@ private:
     // start from node 1
     MatrixXd circuitMatrix, origMatrix;
     VectorXd circuitRightSide, origRightSide, circuitSolve;
-    
+
     double sampleRate = -1;
     double timeStep;
     double prevInputValue = 0;

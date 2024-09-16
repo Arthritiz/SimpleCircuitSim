@@ -1,5 +1,9 @@
 #include "CircuitElm.hpp"
 
+inline bool doublesEqual(double a, double b, double epsilon = 1e-9) {
+    return abs(a - b) < epsilon;
+}
+
 CircuitElm::CircuitElm(CirSim* sim, std::vector<int> nodes): cirSim(sim), nodes(nodes) {}
 
 void CircuitElm::resetState() {
@@ -8,10 +12,6 @@ void CircuitElm::resetState() {
 
 void CircuitElm::baseAlloc() {
     auto elmNodeCount = this->getPostCount();
-    
-    if (nodes.size() != elmNodeCount) {
-        throw;
-    }
     
     for (auto n: nodes) {
         if (n < 0) throw;
@@ -59,38 +59,89 @@ void InputElm::setInputValue(double v) {
 
 // ===VariableResistorElm===
 
-VariableResistorElm::VariableResistorElm(CirSim* sim, double r, std::vector<int> nodes): CircuitElm(sim, std::move(nodes)) {
-    if (r <= 0) {
+VariableResistorElm::VariableResistorElm(CirSim* sim, double lRes, double totalRes,std::vector<int> nodes): CircuitElm(sim, std::move(nodes)) {
+    if (lRes < 0 || totalRes <= 0 || lRes > totalRes) {
         throw;
     }
-    
+
+    if (this->nodes.size() != 3)
+    {
+        throw;
+    }
+
     this->CircuitElm::baseAlloc();
     
-    this->currentResistance = r;
-    this->targetResistance = r;
+    if (lRes <= 0)
+    {
+        lRes = 1.0;
+    }
+
+    if (doublesEqual(lRes, totalRes))
+    {
+        lRes = totalRes - 1.0;
+    }
+
+    this->curLRes = lRes;
+    this->targetLRes = lRes;
+    this->totalRes = totalRes;
 }
 
-void VariableResistorElm::setResistance(double r) {
-    if (r <= 0) {
-        r = 1.0;
+void VariableResistorElm::setLRes(double lRes) {
+    if (lRes <= 0) {
+        lRes = 1.0;
+    }
+
+    if (doublesEqual(lRes, this->totalRes))
+    {
+        lRes = this->totalRes - 1.0;
     }
     
-    this->targetResistance = r;
+    this->targetLRes = lRes;
+}
+
+int VariableResistorElm::getPostCount()
+{
+    if ((nodes[0] == nodes[1]) || (nodes[1] == nodes[2]))
+    {
+        return 2;
+    } else
+    {
+        return 3;
+    }
 }
 
 void VariableResistorElm::stamp() {
-    cirSim->stampResistor(this->nodes[0], this->nodes[1], this->currentResistance);
+    if (this->nodes[0] != this->nodes[1])
+    {
+        cirSim->stampResistor(this->nodes[0], this->nodes[1], this->curLRes);
+    }
+
+    if (this->nodes[1] != this->nodes[2])
+    {
+        cirSim->stampResistor(this->nodes[1], this->nodes[2], this->totalRes - this->curLRes);
+    }
 }
 
 // if return true, it means stamp is called. if false, do nothing
-bool VariableResistorElm::stampSmooth() { // [function not finish]
-    if (this->currentResistance == this->targetResistance) {
+bool VariableResistorElm::stampUpdate() {
+    if (this->curLRes == this->targetLRes) {
         return false;
     }
-    
-    this->cirSim->stampConductance(this->nodes[0], this->nodes[1], 1/this->targetResistance - 1/this->currentResistance);
-    
-    this->currentResistance = this->targetResistance;
-    
+
+    if (this->nodes[0] != this->nodes[1])
+    {
+        this->cirSim->stampConductance(this->nodes[0], this->nodes[1], 1/this->targetLRes - 1/this->curLRes);
+    }
+
+    if (this->nodes[1] != this->nodes[2])
+    {
+        double targetRRes = this->totalRes - this->targetLRes;
+        double curRRes = this->totalRes - this->curLRes;
+
+        this->cirSim->stampConductance(this->nodes[1], this->nodes[2], 1/targetRRes - 1/curRRes);
+    }
+
+    this->curLRes = this->targetLRes;
+
     return true;
 }
