@@ -57,8 +57,8 @@ void DS1Sim::setDistortion(double ratio) {
         ratio = 1.0;
     }
     
-    this->clipStage->setVariableResistance(0, ratio*this->DIST_R);
-    this->clipStage->setVariableResistance(1, (1-ratio)*this->DIST_R + 4.7e3);
+    this->clipStage->setVarLRes(0, ratio*this->DIST_R);
+    this->clipStage->setVarLRes(1, (1-ratio)*this->DIST_R + 4.7e3);
 }
 
 void DS1Sim::setTone(double ratio) {
@@ -68,8 +68,8 @@ void DS1Sim::setTone(double ratio) {
         ratio = 1.0;
     }
     
-    this->toneStage->setVariableResistance(0, ratio*this->TONE_R);
-    this->toneStage->setVariableResistance(1, (1-ratio)*TONE_R);
+    this->toneStage->setVarLRes(0, ratio*this->TONE_R);
+    this->toneStage->setVarLRes(1, (1-ratio)*TONE_R);
 }
 
 void DS1Sim::prepare(double sampleRate) {
